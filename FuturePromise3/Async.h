@@ -1,12 +1,21 @@
 #pragma once
 
 #include <list>
+#include <iostream>
 
 #include "Promise.h"
 #include "Future.h"
 
 template <typename T>
-class MyAsyncTask
+class IFutureTask
+{
+public:
+	virtual void operator()() = 0;
+	virtual std::shared_ptr<MyFuture<T>> getFuture() = 0;
+};
+
+template <typename T>
+class MyAsyncTask : public IFutureTask<T>
 {
 public:
 	MyAsyncTask( std::function<T()> _function ) : function_( _function ) {}
@@ -14,7 +23,8 @@ public:
 	void operator()()
 	{
 		try {
-			promise_.setValue( function_() );
+			T value = function_();
+			promise_.setValue( value );
 		} catch( std::exception& e ) {
 			promise_.setException( e );
 		}
@@ -22,12 +32,18 @@ public:
 
 	std::shared_ptr<MyFuture<T>> getFuture() 
 	{ 
-		return promise_.getFuture(); 
+		if( !is_future_got_ ) {
+			future_ = promise_.getFuture();
+		}
+		is_future_got_ = true;
+		return future_;
 	}
 
 private:
 	std::function<T()> function_;
 	MyPromise<T> promise_;
+	std::shared_ptr<MyFuture<T>> future_;
+	bool is_future_got_ = false;
 };
 
 

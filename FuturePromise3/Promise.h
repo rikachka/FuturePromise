@@ -17,7 +17,7 @@ public:
 	{
 		std::unique_lock<std::mutex> lock( *lock_ );
 		if( shared_state_->is_ready ) {
-			throw std::exception( "Value is already set" );
+			throw std::exception( "set value: value is already set" );
 		}
 		shared_state_->is_ready = true;
 		shared_state_->value = value;
@@ -27,8 +27,9 @@ public:
 	void setException( const std::exception& exception ) 
 	{
 		std::unique_lock<std::mutex> lock( *lock_ );
+		//std::cout << "Exception is thrown " << exception.what();
 		if( shared_state_->is_ready ) {
-			throw std::exception( "Value is already set" );
+			throw std::exception( "set exception: value is already set" );
 		}
 		shared_state_->is_ready = true;
 		shared_state_->is_exception = true;

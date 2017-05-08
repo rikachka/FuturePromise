@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Async.h" />
+    <ClInclude Include="Chain.h" />
     <ClInclude Include="Future.h" />
     <ClInclude Include="Promise.h" />
     <ClInclude Include="stdafx.h" />
